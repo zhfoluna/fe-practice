@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>页面布局</title>
+</head>
+<style>
+
+</style>
+<body>
+    一、文档流
+        1、什么是文档流
+        将窗体自上而下分成一行一行，块级元素从上而下、行内元素在每行从左至又的顺序依次排放的元素
+            1.1、块级元素
+                常见的块级元素有：<h1>~<h6>,<p>,<div>,<ul>,<ol>,<li> 等
+            1.2、行内元素
+                常见的行内元素有：<a>,<strong>,<b>,<em>,<del>,<span>等
+            1.3、行内块级元素
+                在行内元素中有几个特殊的标签，<img />,<input />, <button></button><td />,可以设置它们的宽高度以及对齐属性
+        2、BFC(Block Formatting contxt)
+            块级格式化上下文，独立的渲染区域并且这个区域外部毫不相干
+            2.1 BFC的布局规则
+                内部的Box会在垂直方向，一个接一个放置
+                Box自身垂直方向的位置由margin-top 决定，同一个BFC的两个相邻的Box的margin会发生重叠
+                每个盒子（块盒与行盒）的margin box的左边，与包含块border box的左边相接触，即使存在浮动也是如此
+                BFC的区域不会与float box重叠
+                计算BFC的高度时，浮动元素也参与计算
+                BFC就是一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也是如此
+            2.2 触发BFC的条件
+                根元素<html>
+                float 的值不为none
+                position的值不是static 或者是relative
+                display 的值是inline-block table-cell flex table-caption inline-flex
+                overflow 的值不是visible
+    二、浮动布局
+        float: left | fa-align-right
+        float CSS属性指定一个元素应沿着容器的左侧或右侧放置，允许文本的内联元素环绕它。
+        浮动的元素会脱离文档流并向左/向右浮动，直到碰到父元素或者另一个浮动的元素。(在父级规定的宽度内，不完全脱离文档流)
+        清除浮动主要有两种方式
+            1、clear清除浮动
+                clear属性不允许被清除浮动元素的左边/右边挨着浮动元素，底层原理是在被清除浮动的元素上边或者下边添加足够的清除空间
+                clear 清除的必须是块级元素，否则无法撑起父级元素高度。
+
+                .clearfix:before,  解决现代浏览器上边距折叠的问题
+                .clearfix:after {
+                    display: table;
+                    content: " ";
+                }
+                .clearfix:after {
+                    clear: both;
+                }
+                .clearfix {
+                    *zoom: 1;  为了支持IE6/7
+                }
+
+            2、BFC清除浮动
+    三、流式布局
+        1、目的
+            让布局脱离固定值限制，可以根据页面情况改变相应发生改变
+        2、常用操作符
+            百分比设置%    参考最近父级
+            窗口比设置vw 、vh
+            字体控制em、rem; em根据最近附近字体大小设置，rem根据html字体大小
+
+    四、定位布局
+        1、目的
+            让目标（被布局的）标签在指定参考系下任意布局
+        2、语法
+            基本语法
+                通过position设置定位是否开启
+                    static：静态，未定位（默认值）
+                    relative: 相对定位，未脱离文档流
+                    absolute：绝对定位，完全脱离文档流
+                    fixed：固定定位，完全脱离文档流
+                定位开启后，四个定位方位便会开启，且四个方位均参与布局
+                    如果发生冲突，左右取左，上下取上
+        3、相对定位（relative）
+            未脱离文档流，相对定位主要用于给父级定位，从而辅助子级的绝对定位
+            参考系
+                自己本身
+        4、绝对定位（absolute）
+            完全脱离文档流，有一个z-index可以控制两个绝对定位的优先级，不在文档流中占位，也永远不会撑开父级高度，
+            永远不会影响兄弟布局，显示层高于文档流
+            margin依旧可以影响自身布局，但不会影响兄弟布局，margin改变 兄弟标签布局不会改变
+            参考系
+                相对于该元素最近的已定位的祖先元素，祖先没有定位，参照物是body
+                1、祖先元素没定位
+                    参照物是body
+                2、祖先元素有定位
+                    最近的祖先元素会被设置为绝对定位元素的参照物
+                3、在没有设置left/right top/bottom的情况下
+                    absolute元素的位置就是该元素在文档流中的位置
+
+        5、固定定位（fixed）
+            当元素是绝对定位或者固定定位时，浮动失效
+            参考系
+                浏览器窗口
+            同绝对定位
+    五、 flex布局（弹性布局）
+        /* flex语法 */
+        /* 容器上面的6种属性
+            flex-direction：属性决定主轴的方面 row/row-reverse/column/column-reverse
+            flex-wrap: 决定换行方面 nowrap/wrap/wrap-reverse
+            flex-flow: 是flex-direction和flex-wrap的简写 默认值 row nowarp
+            justify-content: 项目在主轴上的对齐方式 flex-start flex-end center space-between space-around(每个项目两侧间隔相等)
+            align-items: 项目在交叉轴上的对齐方式 flex-start flex-end center baseline stretch(默认值)
+            align-content: 多根轴线的对齐方式 flex-start flex-end center space-between space-around stretch
+
+        项目上的6个属性
+            order: 定义项目的排列顺序 默认为0 数值越小越靠前
+            flex-grow: 定义项目的放大比例 默认为0，即如果存在剩余空间也不放大，属性为1 等分剩余空间，
+                        如果一个项目属性为2，其他项目为1，则前者占据的剩余空间比其他项多一倍
+            flex-shrink: 定义项目的缩小比例 默认为1， 如果空间不足，该项目将缩小
+                        如果所有项目都为1，空间不足，等比例缩小，如果有一个项目为0，其他为1，空间不足，前者缩小
+            flex-basis: 定义在分配多余空间之前，项目占主轴空间
+            flex: 是flex-grow flex-shrink flex-basis 的简写 默认值为 0 1 auto 后两个属性可选
+                    该属性有两个快捷值：auto(1 1 auto) 和 none(0 0 auto)
+            align-self: 允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性，默认值为auto，
+                    继承父元素的align-items */
+    六、响应式布局
+        当响应式布局中样式块起作用时，会与正常样式块设置协同布局，遵循选择器的优先级规则
+        1、目的
+            设置在不同页面宽度下的布局，满足当前屏幕尺寸时，该样式块起作用，不满足时，样式块失效
+        2、语法
+            当页面尺寸小于<integer>宽度时的样式
+                @media only screen and(max-width: <integer>) {
+                    selector {
+
+                    }
+                }
+            当页面尺寸大于<integer1>宽度，小于<integer2>宽度的样式
+                @media only screen and(min-width: <integer1>) and (max-width: <integer2>) {
+                    selector {
+
+                    }
+                }
+
+            当页面尺寸大于<integer3>宽度时的样式
+                @media only screen and(min-width: <integer3>) {
+                    selector {
+
+                    }
+                }
+        3、原则
+            采用响应式布局的页面，基本样式块只做共性样式设置，需要根据页面尺寸进行适应变化的样式均有响应式布局处理
+            要进行响应式布局的页面要处理所有屏幕尺寸下的样式块
+</body>
+</html>

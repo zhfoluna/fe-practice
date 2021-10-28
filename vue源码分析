@@ -1,0 +1,52 @@
+MVVM
+    model：数据层
+    view：视图层
+    viewModel：负责连接view 和model
+               view 和viewModel的数据双向绑定
+vue是采用Object.defineProperty的getter 和setter，并结合观察者模式来实现数据数据绑定的。当把一个普通的javascript对象传给vue实例来作为它的data选项时，vue将遍历他们的属性，用Object.defineProperty将他们转化为getter/setter
+    Observe：数据监听器，对数据对象的所有属性进行监听，如有变动可拿到最新的值并通知订阅者，内部采用的object.defineProperty的getter/setter来实现。
+    Compile：指令解析器，对每个元素节点的指令进行解析，根据指令模版替换数据，
+    watcher：订阅者，作为连接Observe和Compile的桥梁，能够订阅并收到每个属性变动的通知，执行指令绑定的回调函数
+    Dep：消息订阅器，内部维护了一个数组，用来收集订阅者，数据变动触发notify函数，再调用订阅者的update方法。
+
+vue生命周期
+    beforeCreated：data未初始化，不能访问data数据。
+    created：data已初始化，可以访问data的数据，未挂载Dom，不能访问$el。
+    beforeMount：在实例挂载开始前调用，找到对应的template并编译成render函数。{{name}}   render函数 > template > outerHTML
+    mounted：实例挂载到dom，可以进行DOM操作。                   // name: '张三'
+    beforeUpdate：监听data的变化时调用，但是view层没有被重新渲染
+    updated：虚拟dom重新渲染以最小开支重新渲染dom （view层被重新渲染）。
+    beforeDestroy: 在实例销毁之前调用，实例仍然完全可用。
+    destroyed：Vue 实例销毁后调用，Vue 实例指示的所有东西都会解绑定
+vue 父子组建渲染顺序
+    (父)beforeCreated > (父)created > (父)beforeMounted > (子)beforeCreated > (子)created > (子)beforeMounted > (子) mounted > (父)mounted
+    父子组建更新顺序
+    (父)beforeUpdate > (子)beforeUpdate > (子)update > (父)update
+    父子组建销毁顺序
+    (父)beforeDestroy > (子)beforeDestroy > (子)destroy > (父)destroy
+vue 模版编译原理
+    vue 模版编译也就是compilte阶段，将template 编译成render 函数， 经过三个阶段
+        1、parse阶段将template 字符串通过正则表达式生成一颗抽象语法树AST，
+           解析的过程中是通过while不断循环这个字符串，每解析完一个标签指针向下移动，并用栈来建立节点间的层级关系，解析保存好的标签头
+        2、optimize阶段将生成的抽象语法AST进行静态标记，这些标记为静态的节点在后面的patch过程中被跳过对比，从而达到优化的目的。
+        3、generate就是将AST转化为render function 字符串。 
+vue diff算法
+    1、先同级比较，再比较子节点
+    2、先判断一方有子节点和一方没有子节点的情况，如果新的一方有子节点，旧的一方没有，相当于新的子节点替代了原来没有的节点；同理，相反
+    3、再来比较都有子节点的情况。
+        首先会通过判断两个节点的 key、tag、isComment、data 同时定义或者不定义以及当标签类型为input的时候type相不相同
+        来确定两个节点是不是相同节点，如果不是的化就将心机诶但替换旧节点。
+    4、如果是相同节点进入到patchvNode阶段。在这个阶段采用双端比较的算法，同时从新旧节点的两端进行比较，这个过程会用到模版编译时的静态标记
+       配合key来跳过对比静态节点，如果不是再进行其他比较。             
+vue中内置的方法 属性和vue生命周期的运行顺序
+    props => methods =>data => computed => watch;
+
+
+
+生命周期总结
+new Vue()
+
+(1)实例化vue对象，初始化生命周期、事件中心、初始化渲染函数，调用beforeCreate的钩子函数
+(2)beforeCreate之后，初始化injections和provide
+
+
