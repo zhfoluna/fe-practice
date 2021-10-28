@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>一列定宽布局</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    html, body, .box {
+        height: 100%;
+    }
+    /* 定位布局 */
+    /* 方法一 浮动触发bfc */
+    /* .left-box {
+        width: 200px;
+        height: 100%;
+        float: left;
+        background-color: darkgray;
+    }
+    .right-box {
+        position: absolute;
+        left: 200px;
+        right: 0;
+        height: 100%;
+        background-color: darkkhaki;
+    } */
+    /* 方法二 固定定位*/
+    .left-box {
+        position: fixed;
+        width: 200px;
+        height: 100%;
+        background-color: darkgray;
+    }
+    .right-box {
+        padding-left: 200px;
+        height: 100%;
+        background-color: darkkhaki;
+    }
+    button {
+        width: 100px;
+        height: 100px;
+    }
+    /* 浮动布局 - 利用创建BFC*/
+    /* .left-box {
+        width: 200px;
+        height: 100%;
+        background-color: darkgray;
+        float: left;
+    }
+    .right-box {
+        height: 100%;
+        overflow: hidden;
+        background-color: darkkhaki;
+    } */
+    /* flex布局 */
+    /* .box{
+        display: flex;
+    }
+    .left-box{
+        width: 200px;
+        height: 100%;
+        background-color: darkgray;
+    }
+    .right-box {
+        height: 100%;
+        flex: 1;
+        background-color: darkkhaki;
+    } */
+</style>
+<body>
+    <!-- 一列定宽，一列自适应
+        定位布局 -->
+    <div class="box">
+        <div class="left-box">
+            
+        </div>
+        <div class="right-box">
+          
+        </div>
+    </div>    
+</body>
+</html>

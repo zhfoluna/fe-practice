@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>盒子水平垂直剧中</title>
+</head>
+<style>
+    /* 定位-不用直到父盒子的大小 */
+    .box {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: 200px;
+        height: 200px;
+        background-color: lightcoral;
+    }
+    /* flex */  
+    /* html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .box {
+        width: 200px;
+        height: 200px;
+        background-color: lightcyan;
+    } */
+</style>
+<body>
+    <div class="box"></div>
+</body>
+</html>

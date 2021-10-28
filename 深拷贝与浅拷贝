@@ -1,0 +1,66 @@
+浅拷贝
+    Object.assign({}, obj); // 拷贝可枚举属性
+    obj1 = {...obj2}; // 拷贝可遍历的
+    Object.create({},Object.getOwnPropertyDescriptors(obj))
+    Object.defineProperties({}, Object.getOwnPropertyDescriptors(obj))
+    newArr = arr.slice();
+    newArr = arr.concat(arr1);
+    简单实现浅拷贝
+        for(const key in a) {
+            b[key] = a[key];
+        }
+        for(const key of Object.keys(a)) {
+            b[key] = a[key];
+        }
+        浅拷贝只拷贝一层属性，对于引用类型无法拷贝
+深拷贝
+    1.JSON.parse(JSON.stringify(XXXX))
+    2、function simpleDeepClone(a) {
+        const b = Array.isArray(a) ? [] : {}
+        for(const key of Object.keys(a)) {
+            const type = typeof a[key];
+            if(type !== 'object' || a[key] === null) {
+                b[key] = a[key];
+            } else {
+                b[key] = simpleDeepClone(a[key]);
+            }
+        }
+        return b;
+    }
+    function sleep(ms){
+        return new Promise(resovle => {
+            window.setTimeout(resovle, ms)
+        })
+    }
+    sleep(30).then(() => {
+
+    })
+    function deepClone(a){
+        let b = Array.isArray(a) ? [] : {};
+        for(let item of Object.keys(a)) {
+            if (typeof a[item] !== 'object' || a[item] === null) {
+                b[item] = a[item];
+            } else {
+                b[item] = deepClone(a[item]);
+            }
+        }
+        return b;
+    }
+    let str = 'asdfasfasdfadfasdfffd';
+    let o = {};
+    for(let i=0; i< str.length; i++) {
+        let char = str[i];
+        if(o[char]) {
+            o[char]++;
+        } else {
+            o[char] = 1;
+        }
+    }
+    return o;
+    function test(arr) {
+        return arr.reduce((pre, cur) => {
+            return pre.concat(Array.isArray(cur) ? test(cur) : cur);
+        },[])
+    }
+    let arr = [1,2,[3,[4]]];
+    console.log(test(arr));

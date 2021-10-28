@@ -1,0 +1,258 @@
+1、理解对象
+    1.1、属性类型
+        ECMAScript中有两种属性：数据属性和访问器属性
+        1.1.1、数据属性
+            数据属性包含一个数据值的位置。在这个位置可以读取和写入值。
+                Configurable: 可配置
+                    一旦把属性定义为不可配置的，就不能在变回可配置，再调用Object.defineProperty()方法修改除Writable之外的特性都会报错。
+                Enumerable: 可枚举 表示能否通过for-in循环返回属性。
+                Writable:可修改
+                Value: 数据值
+            修改属性的默认配置只能使用Object.defineProperty(obj, key, {Configurable, Enumerable, Writable, Value})
+                在调用Object.defineProperty()方法创建一个新的属性时，如果不指定，configurable、enumerable、writable特性的默认值都是false，
+                如果调用Object.defineProperty()方法只是修改已定义的属性特性，则无此限制。
+        1.1.2、访问器属性
+            Configurable: 可配置  
+            Enumerable: 可枚举
+            Get():在读取属性时调用的函数。   
+            Set():在写入属性时调用的函数。   
+            访问器属性不能直接定义，必须通过Object.defineProperty()来定义。
+    1.2、定义多个属性
+        Object.defineProperties()
+            这个方法接受两个参数：第一个对象是要添加和修改其属性的对象，第二个对象的属性与第一个对象中要添加或修改的属性一一对应。
+    1.33、读取属性的特性
+        Object.getOwnPropertyDescriptor(obj, key);
+            返回值是一个对象，如果是访问器属性, 这个对象的属性有（configurable、enumerable、get、set）
+                        如果是数据属性，这个对象的属性有（configurable、enumerable、writable、value）
+2、创建对象
+    虽然使用Object构造函数或对象字面量都可以创建单个对象，但这些方式有个明显的缺点：使用同一个接口创建很多对象，会产生大量的重复代码。
+    2.1、工厂模式
+        虽然解决了创建多个相似对象的问题，但却没有解决对象识别问题（怎样知道一个对象的类型）。
+        function creatPerson(name,age) {
+            var o = new Object();
+            o.name = name;
+            o.age = age;
+            o.sayName = function() {
+                alert(this.name)
+            }
+            return o;
+        }
+        var person = creatPerson('jack', 18)
+    2.2、自定义构造函数模式
+        创建新实例，必须使用new操作符，经历四个步骤
+            （1）创建一个新对象
+            （2）将构造函数的作用域赋给新对象（this指向这个新对象）
+            （3）执行构造函数中的代码（为新对象添加属性）
+            （4）返回新对象
+        检测对象类型：instanceof    
+        创建自定义构造函数可以将它的实例标识为一种特定的类型，但缺陷就是每个方法都要在每个实例上重新创建一遍。
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+            this.sayName = function() {
+                alert(this.name);
+            }
+        }
+        var person = new Person('mark', 13)
+    2.3、原型模式
+            我们创建的每个函数都有一个prototype(原型)属性，这个属性是一个指针，指向一个对象，
+            而这个对象的用途是包含可以由特定类型的所有实例共享的属性和方法。
+            1、理解原型对象
+                只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype属性，这个属性指向函数的原型对象。
+                默认情况下，所有原型对象都会自动创建一个constructor（构造函数）属性，这个属性是一个指向prototype属性所在函数的指针。
+                isPrototypeOf(obj)
+                    判断该对象是否在另一个对象的原型链上。存在=== true；不存在===false
+                Object.getPrototypeOf(obj)
+                    返回的对象就是这个对象的原型    
+                hasOwnProperty()    
+                    检测一个属性存在于实例中（返回true）,还是存在于原型中（false）
+                propertyIsEnumerable()
+                    检测一个属性是自有属性并且是可枚举的（true）,否则返回false    
+                Object.getOwnPropertyNames()
+                    返回对象所有自有属性的名称，无论是否可枚举   
+                Object.keys()
+                    返回对象自身所有可枚举的属性名     
+            2、原型与in操作符
+                有两种方式使用in操作符：单独使用和在for-in循环中使用。
+                    单独使用时，in操作符会在通过对象能够访问给定属性时返回true，无论该属性存在于对象中还是存在于原型中。
+                同时使用hasOwnProperty()和in操作符就可以确定该属性到底是存在于对象中，还是原型中。 
+                在使用for-in循环时，返回的是所有能够通过对象访问的、可枚举的属性，屏蔽了原型中不可枚举属性的实例属性也会在for-in循环中返回。
+                根据规定，所有开发人员定义的属性都是可枚举的。
+            3、重写原型对象切断了现有原型与任何之前已经存在的对象实例之间的联系；它们引用的仍然是最初的原型。    
+        原型中的所有属性是被很多实例共享的，这种共享对于函数非常合适，对于那些包含基本值的属性也说的过去，通过在实例上添加同名属性，可以隐藏原型中的对应属性。
+        对于包含引用类型值的属性来说，问题比较大。  
+        function Person() {
+
+        }  
+        Person.prototype.name = 'nike';
+        Person.prototype.age = 19;
+        Person.prototype.sayName = ;
+
+    2.4、组合使用构造函数模式和原型模式
+        构造函数模式定义实例属性，原型模式定义方法和共享属性。最大限度的节省内存空间。
+    2.5、动态原型模式
+        通过在构造函数中初始化原型，又保持了同时使用构造函数和原型的优点。
+        function Person(name, age, sayName) {
+            this.name = name;
+            this.age = age;
+            if(typeof this.sayName !== 'function') {
+                Person.prototype.sayName = function() {
+                    console.log(this.name);
+                };
+            }
+        }
+    2.6、寄生构造函数模式
+        创建一个具有额外方法的特殊数组
+            function specialArray(){
+                // 创建数组
+                var values = new Array();
+                // 添加值
+                values.push.apply(values, arguments);
+                // 添加方法
+                values.toPipedString = function(){
+                    return this.join('|');
+                }
+                return values;
+            }
+            var colors = new specialArray('red', 'blue', 'green');
+            alert(colors.toPipedString());
+    2.7、稳妥构造函数模式
+        function Process (nameF) {
+            var o = new Object();
+            var name = nameF;//1
+            o.sayName = function(){
+                alert(name);//2
+            };
+            return o;
+        }
+
+        var friend = Process('Nick');
+        friend.sayName();  //"Nick"
+        console.log(friend.name);//undefined//3
+二、继承    
+    // 父类
+        function Parent(name){
+            this.name = name;
+            this.sum = function(){
+                alert(this.name);
+            }
+        }
+        Parent.prototype.age = 18;
+    3.1、原型链继承
+        function Child(){
+            this.name = 'ker';
+        }
+        Child.prototype = new Parent(); // 重点
+        var child = new Child();
+        console.log(child.age); // 18;
+        利用原型让一个引用类型继承另一个引用类型的属性和方法。
+        重点：让实例的原型等于父类的实例。
+        特点：实例可继承的属性有：实例的构造函数的属性，父类构造函数的属性，父类原型的属性
+        缺点：新实例无法向父类构造函数传参。
+             继承单一
+             所有新实例都会共享父类实例的属性。（原型上的属性是共享的，一个实例修改了原型属性，另一个实例的原型属性也会被修改）
+    3.2、借用构造函数继承
+        function Con() {
+            Person.call(this, 'jer'); // 重点
+            this.age = 12;
+        }
+        var con = new Con();
+        console.log(con.name); // jer
+        console.log(con.age); // 12
+        console.log(con instanceof Parent); // false
+        重点：用call()和apply()将父类构造函数引入子类构造函数（在子类函数中做了父类函数的自执行（复制））
+        特点：只继承了父类构造函数的属性，没有继承父类原型的属性。
+             可以继承多个构造函数属性（call多个）
+             在子实例中可以向父实例传参
+             解决了原型链继承的缺点
+        缺点：只能继承父类构造函数的属性。
+             无法实现构造函数的复用
+             每个新实例都有父类构造函数的副本。
+    3.3、组合继承
+        function SubType(name){
+            Person.call(this, 'name'); // 借用构造函数模式
+        }         
+        SubType.prototype = new Person(); // 原型链模式
+        var sub = new SubType('gar');
+        console.log(sub.name); // gar继承构造函数模式
+        console.log(sub.age); // 18继承原型链模式
+        重点：结合两种模式优点，传参和复用。
+        特点：可以继承父类原型上的属性，可以传参，可复用
+             每个新实例引入的构造函数属性是私有的
+        缺点：调用两次父类构造函数（耗内存），子类的构造函数会代替原型上的那个父类构造函数。
+    3.4、原型式继承
+        function content(obj){
+            function F(){};
+            F.prototype = obj;
+            return new F();
+        }
+        var sup = new Person();
+        var sup1 = content(sup);
+        console.log(sup1);
+        重点：用一个函数包装一个对象，然后返回这个函数的调用，这个函数就变成了可以随意增添属性的实例或对象。
+             Object.create()就是这个原理。
+        特点：类似于复制一个对象，用函数来包装
+        缺点：所有的实例都会继承原型上的属性。
+             无法实现复用（新实例属性都是后面添加的）
+    3.5、寄生式继承
+        function content(obj){
+            function F(){};
+            F.prototype = obj;
+            return new F();
+        }
+        var sup = new Person();
+        function subObject(obj){
+            var sub = content(obj);
+            sub.name = 'gar';
+            return sub;
+        }
+        var sup2 = subObject(sup);
+        console.log(typeof subObject); // function
+        console.log(typeof sup2); // object
+        console.log(sup2.name); // 'gar'
+        重点：就是给原型式继承外面套了个壳子。
+        优点：没有创建自定义类型，因为只是套了个壳子返回对象（这个），这个函数顺理成章就成了创建的新对象。
+        缺点：没用到原型，无法复用。
+    3.6、寄生组合式继承    
+            function content(obj){
+                function F(){};
+                F.prototype = obj;
+                return new F();
+            }
+            var con = content(Person.prototype);
+            function Sub(){
+                Person.call(this);
+            }
+            Sub.prototype = con;
+            con.constructor = Sub;
+            var sub1 = new Sub();
+            console.log(sub1.age);
+        重点：修复了组合继承的问题
+        继承这些知识点与其说是对象的继承，更像是函数的功能用法，如何用函数做到复用，组合，这些和使用继承的思考是一样的。
+        上述几个继承的方法都可以手动修复他们的缺点，但就是多了这个手动修复就变成了另一种继承模式。
+　　　　  这些继承模式的学习重点是学它们的思想，不然你会在coding书本上的例子的时候，会觉得明明可以直接继承为什么还要搞这么麻烦。
+        就像原型式继承它用函数复制了内部对象的一个副本，这样不仅可以继承内部对象的属性，还能把函数（对象，来源内部对象的返回）随意调用，给它们添加属性，
+        改个参数就可以改变原型对象，而这些新增的属性也不会相互影响。
+
+
+原型：相当于一个模具，用来生产实例对象。
+         就是js里实现面向对象的方式，也就是说js是基于原型的面向对象。
+    原型链：原型有个指针指向构造函数，实例对象又有一个指针指向原型对象，就形成一条原型链，最终指向null
+        js实现继承的方式
+    作用域
+        作用域分全局作用域和局部作用域，只有函数才有作用域，函数内部可以读取函数外部变量，函数外部不能读取函数内部的局部变量    
+    作用域链
+
+        变量随着作用长辈函数一级一级往上搜索，直到找到为止，找不到就报错，这个过程就是作用域链器的作用。
+    闭包
+        闭包就是能够读取其他函数内部边变量的函数，本质上闭包就是将函数内部和函数外部连接起来的一座桥梁
+        作用：
+            （1）可以读取函数内部的变量
+            （2）让这个变量始终保持在内存中
+    继承
+        继承指的是一个对象可以共享父级对象的一些属性。      
+
+
+
+
+
